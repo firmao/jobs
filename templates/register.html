@@ -30,16 +30,19 @@
     </style>
 </head>
 <body>
-    <h1>Welcome to the Ash and Andre Data Management System for Job and Students</h1>
+    <h1>Welcome to the Data Management System</h1>
     
+    <!-- Buttons to query data -->
     <a href="{{ url_for('query_students') }}" class="button">Query Students</a>
     <a href="{{ url_for('query_jobs') }}" class="button">Query Jobs</a>
-    
-    <!-- Add other navigation links as needed -->
-    <br>
+
+    <!-- Buttons to insert data -->
+    <a href="{{ url_for('register_student') }}" class="button">Register Student</a>
+    <a href="{{ url_for('register_company') }}" class="button">Register Company</a>
     <a href="{{ url_for('post_job') }}" class="button">Post Job</a>
+    
+    <!-- Other navigation links -->
     <a href="{{ url_for('match') }}" class="button">Match</a>
     <a href="{{ url_for('export_data') }}" class="button">Export Data</a>
-    
 </body>
 </html>

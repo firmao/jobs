@@ -29,31 +29,35 @@ class JobPost(db.Model):
 def home():
     return render_template('register.html')
 
-@app.route('/register_student', methods=['POST'])
+@app.route('/register_student', methods=['GET', 'POST'])
 def register_student():
-    email = request.form['email']
-    name = request.form['name']
-    if Student.query.filter_by(email=email).first():
-        flash('Student already registered.')
-    else:
-        student = Student(email=email, name=name)
-        db.session.add(student)
-        db.session.commit()
-        flash('Student registered successfully.')
-    return redirect(url_for('home'))
+    if request.method == 'POST':
+        email = request.form['email']
+        name = request.form['name']
+        if Student.query.filter_by(email=email).first():
+            flash('Student already registered.')
+        else:
+            student = Student(email=email, name=name)
+            db.session.add(student)
+            db.session.commit()
+            flash('Student registered successfully.')
+        return redirect(url_for('home'))
+    return render_template('register_student.html')
 
-@app.route('/register_company', methods=['POST'])
+@app.route('/register_company', methods=['GET', 'POST'])
 def register_company():
-    email = request.form['email']
-    name = request.form['name']
-    if Company.query.filter_by(email=email).first():
-        flash('Company already registered.')
-    else:
-        company = Company(email=email, name=name)
-        db.session.add(company)
-        db.session.commit()
-        flash('Company registered successfully.')
-    return redirect(url_for('home'))
+    if request.method == 'POST':
+        email = request.form['email']
+        name = request.form['name']
+        if Company.query.filter_by(email=email).first():
+            flash('Company already registered.')
+        else:
+            company = Company(email=email, name=name)
+            db.session.add(company)
+            db.session.commit()
+            flash('Company registered successfully.')
+        return redirect(url_for('home'))
+    return render_template('register_company.html')
 
 @app.route('/post_job', methods=['GET', 'POST'])
 def post_job():
@@ -65,7 +69,7 @@ def post_job():
         db.session.add(job)
         db.session.commit()
         flash('Job posted successfully.')
-        return redirect(url_for('post_job'))
+        return redirect(url_for('home'))
     companies = Company.query.all()
     return render_template('post_job.html', companies=companies)
 
