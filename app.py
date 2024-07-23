@@ -1,11 +1,15 @@
-from flask import Flask, request, redirect, url_for, render_template, flash
+from flask import Flask, request, redirect, url_for, render_template, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 import secrets
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///poc.db'
 app.config['SECRET_KEY'] = secrets.token_hex(16)
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
+
 db = SQLAlchemy(app)
 
 class Student(db.Model):
@@ -28,6 +32,47 @@ class JobPost(db.Model):
 @app.route('/')
 def home():
     return render_template('register.html')
+
+@app.route('/match', methods=['GET'])
+def match():
+    students = Student.query.all()
+    jobs = JobPost.query.all()
+    matches = []
+    for student in students:
+        for job in jobs:
+            if 'Python' in job.description:
+                matches.append((student.name, job.title))
+    return render_template('match.html', matches=matches)
+
+@app.route('/export', methods=['GET'])
+def export_data():
+    students = Student.query.all()
+    jobs = JobPost.query.all()
+    student_data = [(s.name, s.email) for s in students]
+    job_data = [(j.title, j.description) for j in jobs]
+    df_students = pd.DataFrame(student_data, columns=['Name', 'Email'])
+    df_jobs = pd.DataFrame(job_data, columns=['Title', 'Description'])
+    df_students.to_csv('students.csv', index=False)
+    df_jobs.to_csv('jobs.csv', index=False)
+    return render_template('export.html')
+
+# Query Students
+@app.route('/query_students', methods=['GET', 'POST'])
+def query_students():
+    if request.method == 'POST':
+        email = request.form['email']
+        student = Student.query.filter_by(email=email).first()
+        return render_template('query_results.html', results=[student] if student else [], query='Student')
+    return render_template('query_students.html')
+
+# Query Jobs
+@app.route('/query_jobs', methods=['GET', 'POST'])
+def query_jobs():
+    if request.method == 'POST':
+        title = request.form['title']
+        jobs = JobPost.query.filter(JobPost.title.like(f'%{title}%')).all()
+        return render_template('query_results.html', results=jobs, query='Job')
+    return render_template('query_jobs.html')
 
 @app.route('/register_student', methods=['GET', 'POST'])
 def register_student():
@@ -73,47 +118,32 @@ def post_job():
     companies = Company.query.all()
     return render_template('post_job.html', companies=companies)
 
-@app.route('/match', methods=['GET'])
-def match():
-    students = Student.query.all()
-    jobs = JobPost.query.all()
-    matches = []
-    for student in students:
-        for job in jobs:
-            if 'Python' in job.description:
-                matches.append((student.name, job.title))
-    return render_template('match.html', matches=matches)
-
-@app.route('/export', methods=['GET'])
-def export_data():
-    students = Student.query.all()
-    jobs = JobPost.query.all()
-    student_data = [(s.name, s.email) for s in students]
-    job_data = [(j.title, j.description) for j in jobs]
-    df_students = pd.DataFrame(student_data, columns=['Name', 'Email'])
-    df_jobs = pd.DataFrame(job_data, columns=['Title', 'Description'])
-    df_students.to_csv('students.csv', index=False)
-    df_jobs.to_csv('jobs.csv', index=False)
-    return render_template('export.html')
-
-# Query Students
-@app.route('/query_students', methods=['GET', 'POST'])
-def query_students():
+@app.route('/upload_cv', methods=['GET', 'POST'])
+def upload_cv():
     if request.method == 'POST':
-        email = request.form['email']
-        student = Student.query.filter_by(email=email).first()
-        return render_template('query_results.html', results=[student] if student else [], query='Student')
-    return render_template('query_students.html')
+        if 'cv' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['cv']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = file.filename
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            flash('CV uploaded successfully.')
+            return redirect(url_for('home'))
+    return render_template('upload_cv.html')
 
-# Query Jobs
-@app.route('/query_jobs', methods=['GET', 'POST'])
-def query_jobs():
-    if request.method == 'POST':
-        title = request.form['title']
-        jobs = JobPost.query.filter(JobPost.title.like(f'%{title}%')).all()
-        return render_template('query_results.html', results=jobs, query='Job')
-    return render_template('query_jobs.html')
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'pdf', 'doc', 'docx'}
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
     db.create_all()
     app.run(debug=True)
