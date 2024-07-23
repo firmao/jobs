@@ -3,6 +3,9 @@ Welcome to the Ash and Andre Data Management System for Job and Students
 
 5 steps to run our python script with our proof of concept:
 
+You need to dowload and install python in your computer:
+https://www.python.org/
+
 (1) Clone the repository:
 ```
 git clone https://github.com/firmao/jobs.git
@@ -11,6 +14,8 @@ git clone https://github.com/firmao/jobs.git
 ```
 cd jobs
 ```
+Alternative you can use Github code spaces:
+
 (3) Install the required python libraries:
 ```
 pip install -r requirements.txt
