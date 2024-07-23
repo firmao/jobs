@@ -1,7 +1,7 @@
 # jobs
 Welcome to the Ash and Andre Data Management System for Job and Students
 
-4 steps to run our python script with our proof of concept:
+5 steps to run our python script with our proof of concept:
 
 (1) Clone the repository:
 ```
