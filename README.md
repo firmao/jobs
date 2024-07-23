@@ -1,6 +1,8 @@
 # jobs
 Welcome to the Ash and Andre Data Management System for Job and Students
 
+This was made with help of chatGPT.
+
 5 steps to run our python script with our proof of concept:
 
 You need to dowload and install python in your computer:
