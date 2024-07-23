@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Ash and Andre Data Management System for Job and Students</h1>
+    
+    <a href="{{ url_for('query_students') }}" class="button">Query Students</a>
+    <a href="{{ url_for('query_jobs') }}" class="button">Query Jobs</a>
+    
+    <!-- Add other navigation links as needed -->
+    <br>
+    <a href="{{ url_for('post_job') }}" class="button">Post Job</a>
+    <a href="{{ url_for('match') }}" class="button">Match</a>
+    <a href="{{ url_for('export_data') }}" class="button">Export Data</a>
+    
+</body>
+</html>

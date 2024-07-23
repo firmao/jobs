@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Match</title>
+</head>
+<body>
+    <h1>Match Results</h1>
+    <ul>
+        {% for student, job in matches %}
+            <li>{{ student }} matched with job {{ job }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

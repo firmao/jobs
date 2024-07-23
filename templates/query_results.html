@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Query Results</title>
+</head>
+<body>
+    <h1>Query Results for {{ query }}</h1>
+    {% if results %}
+        <ul>
+            {% for result in results %}
+                <li>
+                    {% if query == 'Student' %}
+                        Name: {{ result.name }}, Email: {{ result.email }}
+                    {% elif query == 'Job' %}
+                        Title: {{ result.title }}, Description: {{ result.description }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+    <a href="{{ url_for('query_students') }}">Query Students</a>
+    <a href="{{ url_for('query_jobs') }}">Query Jobs</a>
+    <a href="{{ url_for('home') }}">Home</a>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Query Jobs</title>
+</head>
+<body>
+    <h1>Query Jobs</h1>
+    <form action="{{ url_for('query_jobs') }}" method="post">
+        <label for="title">Enter Job Title:</label>
+        <input type="text" name="title" id="title" required>
+        <button type="submit">Search</button>
+    </form>
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('query_students') }}">Query Students</a>
+</body>
+</html>
